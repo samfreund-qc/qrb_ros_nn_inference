@@ -205,9 +205,10 @@ private:
   std::tuple<std::shared_ptr<uint8_t[]>, uint64_t> read_binary_model();
   StatusCode get_and_set_graph_info_from_binary(const std::shared_ptr<uint8_t[]> model_buf,
       const uint64_t model_buf_size);
-  StatusCode copy_graph_info_v1(const QnnSystemContext_GraphInfo_t * graphs_array);
-  StatusCode copy_graph_info_v2(const QnnSystemContext_GraphInfo_t * graphs_array);
-  StatusCode copy_graph_info_v3(const QnnSystemContext_GraphInfo_t * graphs_array);
+  // GraphInfoMember selects which versioned member (graphInfoV1/V2/V3) of
+  // QnnSystemContext_GraphInfo_t to read from for a given binary-info version.
+  template <auto GraphInfoMember>
+  StatusCode copy_graph_info(const QnnSystemContext_GraphInfo_t * graphs_array);
   StatusCode set_up_graph_info(const QnnSystemContext_BinaryInfo_t * binary_info);
   StatusCode create_context_from_binary(const std::shared_ptr<uint8_t[]> model_buf,
       const uint64_t model_buf_size);
