@@ -280,7 +280,7 @@ StatusCode QnnInference::inference_execute_dmabuf(int dmabuf_fd,
     if (cached_input_fd_ != dmabuf_fd || cached_input_handle_ == nullptr) {
       // Input fd changed or first frame: (de)register
       if (cached_input_handle_ != nullptr) {
-        qnn_interface_->interface_.memDeRegister(&cached_input_handle_, 1u);
+        iface()->interface_.memDeRegister(&cached_input_handle_, 1u);
         cached_input_handle_ = nullptr;
       }
 
@@ -292,11 +292,11 @@ StatusCode QnnInference::inference_execute_dmabuf(int dmabuf_fd,
         input_mem_desc.memType = QNN_MEM_TYPE_ION;
         input_mem_desc.ionInfo.fd = dmabuf_fd;
 
-        auto rc = qnn_interface_->interface_.memRegister(
+        auto rc = iface()->interface_.memRegister(
             context_, &input_mem_desc, 1u, &cached_input_handle_);
         if (QNN_SUCCESS != rc) {
           const char * err_msg = nullptr;
-          qnn_interface_->interface_.errorGetMessage(rc, &err_msg);
+          iface()->interface_.errorGetMessage(rc, &err_msg);
           QRB_ERROR("memRegister(input) failed: ", (err_msg ? err_msg : "unknown"));
           cached_input_handle_ = nullptr;
           return StatusCode::FAILURE;
@@ -316,11 +316,11 @@ StatusCode QnnInference::inference_execute_dmabuf(int dmabuf_fd,
         htp_mem_desc.sharedBufferConfig = htp_shared_buf_config;
         input_mem_desc.customInfo = &htp_mem_desc;
 
-        auto rc = qnn_interface_->interface_.memRegister(
+        auto rc = iface()->interface_.memRegister(
             context_, &input_mem_desc, 1u, &cached_input_handle_);
         if (QNN_SUCCESS != rc) {
           const char * err_msg = nullptr;
-          qnn_interface_->interface_.errorGetMessage(rc, &err_msg);
+          iface()->interface_.errorGetMessage(rc, &err_msg);
           QRB_ERROR("memRegister(input) failed: ", (err_msg ? err_msg : "unknown"));
           cached_input_handle_ = nullptr;
           return StatusCode::FAILURE;
@@ -373,10 +373,10 @@ StatusCode QnnInference::inference_execute_dmabuf(int dmabuf_fd,
 
         Qnn_MemHandle_t out_mem_handle = nullptr;
         auto out_rc =
-            qnn_interface_->interface_.memRegister(context_, &out_mem_desc, 1u, &out_mem_handle);
+            iface()->interface_.memRegister(context_, &out_mem_desc, 1u, &out_mem_handle);
         if (QNN_SUCCESS != out_rc) {
           const char * err_msg = nullptr;
-          qnn_interface_->interface_.errorGetMessage(out_rc, &err_msg);
+          iface()->interface_.errorGetMessage(out_rc, &err_msg);
           QRB_ERROR("memRegister(output) failed: ", (err_msg ? err_msg : "unknown"));
           return StatusCode::FAILURE;
         }
