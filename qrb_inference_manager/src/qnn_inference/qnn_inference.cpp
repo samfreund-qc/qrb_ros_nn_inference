@@ -792,33 +792,6 @@ static StatusCode set_up_tensors_info(
   return StatusCode::SUCCESS;
 }
 
-// Helper: allocate a GraphInfo entry from a typed graph info struct.
-template <typename GI>
-static StatusCode make_graph_info(const GI & gi_src, GraphInfo *& out)
-{
-  out = (GraphInfo *)calloc(1, sizeof(GraphInfo));
-  if (nullptr == out) {
-    return StatusCode::FAILURE;
-  }
-  out->graph_name = (char *)malloc(strlen(gi_src.graphName) + 1);
-  if (nullptr == out->graph_name) {
-    return StatusCode::FAILURE;
-  }
-  memcpy(out->graph_name, gi_src.graphName, strlen(gi_src.graphName) + 1);
-
-  out->num_of_input_tensors = gi_src.numGraphInputs;
-  if (StatusCode::SUCCESS !=
-      set_up_tensors_info(gi_src.graphInputs, gi_src.numGraphInputs, out->input_tensors)) {
-    return StatusCode::FAILURE;
-  }
-  out->num_of_output_tensors = gi_src.numGraphOutputs;
-  if (StatusCode::SUCCESS !=
-      set_up_tensors_info(gi_src.graphOutputs, gi_src.numGraphOutputs, out->output_tensors)) {
-    return StatusCode::FAILURE;
-  }
-  return StatusCode::SUCCESS;
-}
-
 // GraphInfoMember is a pointer-to-member selecting graphInfoV1/V2/V3 out of
 // QnnSystemContext_GraphInfo_t, so the same loop body works for every binary-info version.
 template <auto GraphInfoMember>

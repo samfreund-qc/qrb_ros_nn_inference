@@ -214,7 +214,6 @@ private:
       const uint64_t model_buf_size);
 
   // DMA buffer pool: cached handles for zero-overhead frame-to-frame reuse (dmabuf path)
-  std::mutex dmabuf_cache_mutex_;
   int cached_input_fd_{ -1 };
   Qnn_MemHandle_t cached_input_handle_{ nullptr };
   std::vector<std::shared_ptr<RpcMemManager>> cached_output_buffers_;
